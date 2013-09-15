@@ -1,0 +1,88 @@
+tweet='We have some delightful new food in the cafeteria. Awesome!!!'
+positive_words=['awesome', 'good', 'nice', 'super', 'fun']
+positive_words.append('delightful')
+negative_words=['awful', 'lame', 'horrible', 'bad']
+emotional_words=positive_words+negative_words
+
+##"bag of words" analyze each word on its own
+words=tweet.split()
+##how many words in tweet
+len(words)
+for word in words:
+    if word in positive_words:
+        print word + ' is a positive word'
+###making tweets lower case
+tweet.lower()
+for word in words:
+    print word.lower()
+###Removing punctuation
+print tweet.replace('!','')
+tweet_noex=tweet.replace('!','')
+tweet_processed=tweet.replace('!','').replace('.','')
+tweet_processed=tweet_processed.lower()
+words=tweet_processed.split(' ')
+
+###bring in punctuation module
+from string import punctuation
+
+##Preprocessed final
+tweet_processed=tweet.lower()
+for p in list(punctuation):
+    tweet_processed=tweet_processed.replace(p,'')    
+words=tweet_processed.split(' ')
+
+###Creating a counter/ratio
+positive_counter=0
+for word in words:
+    if word in positive_words:
+        print word+ ' is a positive word'
+        positive_counter=positive_counter+1
+positive_counter/len(words)
+
+####
+from __future__ import division
+
+
+###Lesson 3
+from string import punctuation
+import urllib
+import csv
+
+url='http://www.unc.edu/~ncare/haphazard/negative.txt'
+file_name='negative.txt'
+urllib.urlretrieve('http://www.unc.edu/~ncaren/haphazard/negative.txt','negative.txt')
+files=['negative.txt','positive.txt','obama_tweets.txt']
+path='http://www.unc.edu/~ncaren/haphazard/'
+for file_name in files:
+    urllib.urlretrieve(path+file_name,file_name)
+tweets = open("obama_tweets.txt").read()
+tweets_list = tweets.split('\n')
+len(tweets_list)
+
+pos_sent = open("positive.txt").read()
+positive_words=pos_sent.split('\n')
+print positive_words[-15:]
+
+###preprocessing
+positive_counts=[]
+
+
+for tweets in tweets_list:
+    positive_counter=0
+    tweet_processed=tweets.lower()
+    for p in list (punctuation):
+        tweet_processed=tweet_processed.replace(p,'')
+        words=tweet_processed.split(' ')
+    for word in words:
+        if word in positive_words:
+            positive_counter=positive_counter+1
+    positive_counts.append(positive_counter/len(words))
+
+print positive_counts
+
+output=zip(tweets_list,positive_counts)
+
+writer = csv.writer(open('tweet_sentiment2.csv', 'wb'))
+writer.writerows(output)
+
+positive_counts.append(positive_counter/word_count)

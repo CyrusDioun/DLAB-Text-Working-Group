@@ -1,0 +1,65 @@
+#!/usr/bin/python
+
+from __future__ import division
+import urllib
+import csv
+import sys
+import re
+from string import punctuation
+
+
+
+urllib.urlretrieve('http://www.unc.edu/~ncaren/haphazard/negative.txt','negative.txt')
+urllib.urlretrieve('http://www.unc.edu/~ncaren/haphazard/positive.txt','positive.txt')
+pos_sent = open("positive.txt").read()
+positive_words=pos_sent.split('\n')
+neg_sent = open("negative.txt").read()
+negative_words=neg_sent.split('\n')
+
+
+
+with open("business_all.csv", 'rb') as x:
+    maxInt = sys.maxsize
+    csv.field_size_limit(maxInt)
+    mycsv = csv.reader(x)
+    outname = open("business_all_new.csv", 'wb')
+    outfile = csv.writer(outname)
+
+    for row in mycsv:
+        text = row[17]
+        text_list = text.split('\n')
+        #print text_list
+        for t in text_list:
+            #print t
+            pattern_w = re.search(r"Whitman|HP|Rometty|IBM|Woertz|Archer Daniels|ADM|Nooyi|Pepsi|Hewson|Lockheed|Kullman|DuPont|Rosenfeld|Mondelez|Novakovic|General Dynamics|Meyrowitz|TJX|Burns|Xerox|Lynn(:?J.*)? Good|Duke Energy|Mulligan|Guardian|McCoy|Avon|Reed|Sempra|Morrison|Campbell Soup|Bresch|Mylan|Gordon|Ingredion|Mazzarella| Graybar Electric|Martore|Gannett|Wilderotter|Frontier Communications|Mayer|Yahoo", t)
+            if pattern_w:
+                women = 1
+            else:
+                women = 0
+            ceow = women
+            pattern_m = re.search(r"Michael(:? T.*)? Duke|Wal-Mart|Tillerson|Exxon|Watson|Chevron|Garland|Phillips 66|Buffett|Berkshire Hathaway|Timothy(:? D.*)? Cook|Apple|Akerson|General Motors|GM|Immelt|General Electric|GE|Klesse| Valero|Mulally|Ford|Stephenson|AT&T|ATT|Mayopoulos|Fannie Mae|Merlo|CVS|Hammergren|McKesson|McAdam|Verizon|Hemsley|UnitedHealth|Dimon|J\.P\. Morgan|Barrett|Cardinal Health|Moynihan|Bank of America|Jelinek|Costco|Dillon|Kroger", t)
+            if pattern_m:
+                men = 1
+            else:
+                men = 0
+            ceom = men
+            positive_counter=0
+            negative_counter=0
+            text_processed=t.lower()
+            for p in list(punctuation):
+                text_processed=text_processed.replace(p,'')
+                words=text_processed.split(' ')
+            for word in words:
+                if word in positive_words:
+                    positive_counter=positive_counter+1
+                pos_prop = positive_counter/len(words)
+                if word in negative_words:
+                    negative_counter=negative_counter+1
+                neg_prop = negative_counter/len(words)
+            #print neg_prop
+            #print pos_prop
+            row.append(pos_prop)
+            row.append(neg_prop)
+            row.append(ceom)
+            row.append(ceow)
+            outfile.writerow(row)
